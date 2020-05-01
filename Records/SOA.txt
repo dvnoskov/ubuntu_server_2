@@ -1,0 +1,39 @@
+# v1.2020 soa-records
+#dhost1.ml.	300	IN	SOA	ns01.freenom.com. soa.freenom.com. 1575765955 10800 3600 604800 3600
+#----------------------------------------------------------------------------------
+SOA record =dynhost.ml# '64796e686f73742e6d6c'
+MNAME =ns01.dhost1.ml.#
+RNAME =soa.dhost1.ml.#
+SERIAL =5dec47c3# 5dec47c3 dhost1.ml.	300	IN	SOA
+REFRESH =00001c20#7200c
+RETRY =00000E10#3600c
+EXPIRE =00093A80#604800
+MINIMUM =00000E10#3600c
+#--------------------------------------------------------------------------------------
+SOA record =ndv01.dynhost.ml#
+MNAME =ns.dynhost.ml.#
+RNAME =hostmasters dmytri vik noskov gmail com.#
+SERIAL =7858E045# 2019090501 yyyy mm dd nn
+REFRESH =00001c20#7200c
+RETRY =00000E10#3600c
+EXPIRE =00093A80#604800
+MINIMUM =00000E10#3600c
+#-------------------------------------------------------------------------------------
+SOA record =default# default                     list  default *.dynhost.ml
+MNAME =ns.dynhost.ml.#
+RNAME =hostmasters dmytri vik noskov gmail com.#
+SERIAL =7858E045# 2019090501 yyyy mm dd nn
+REFRESH =00001c20#7200c
+RETRY =00000E10#3600c
+EXPIRE =00093A80#604800
+MINIMUM =00000E10#3600c
+#-----------------------------------------------------------------------------------
+SOA record =err.dynhost.ml# default answer_no_name
+MNAME =ns.dynhost.ml.#
+RNAME =soa.dynhost.ml.#
+SERIAL =7858E045# 2019090501 yyyy mm dd nn
+REFRESH =00001c20#7200c
+RETRY =00000E10#3600c
+EXPIRE =00093A80#604800
+MINIMUM =00000E10#3600c
+#-------------------------------------------------------------------------------------

@@ -1,0 +1,12 @@
+# v1.2020 ns-records
+#----------------------------------------------------------------------------------
+NS record =*.dynhost.ml# default
+NS_count =1#country records(max==4)
+NS_DATA =dynhost.ml.#
+#NS_DATA =dynhost ml#
+#-----------------------------------------------------------------------------------
+NS record =dynhost.ml# '64796e686f73742e6d6c'
+NS_count =2#country records(max==4)
+NS_DATA =dhost1.ml.#
+NS_DATA =dhost2.ml.#
+#-----------------------------------------------------------------------------------

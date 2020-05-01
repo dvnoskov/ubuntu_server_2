@@ -1,0 +1,18 @@
+# v1.2020 txt-records
+#----------------------------------------------
+# example format   # max = 4 records
+#TXT_record =dynhost.ml# '64796e686f73742e6d6c'
+#TXT_count =1# country records
+#TXT_DATA =v=spf1 -all# record
+#----------------------------------------------
+TXT_record =dynhost.ml#
+TXT_count =2#
+TXT_DATA =v=spf1 -all#
+TXT_DATA =v=spf1 -all2#
+TXT_DATA =v=spf1 -all3#
+TXT_DATA =v=spf1 -all4#
+#------------------------------------------------
+TXT_record =ndv01.dynhost.ml#
+TXT_count =1#
+TXT_DATA =v=spf1 -all#
+#-------------------------------------------------
