@@ -189,8 +189,8 @@ def answer_no_name(List_db_dns_out, List_db_dns_out_1):
     List_db_dns_out["TTL"] = MINIMUM
     NAME_err = "err.dynhost.ml"
 
-    if os.path.isfile(os.path.abspath('.\\Records\\SOA.txt')):
-        infile = open(os.path.abspath('.\\Records\\SOA.txt'), 'r')
+    if os.path.isfile(os.path.abspath('./Records/SOA.txt')):
+        infile = open(os.path.abspath('./Records/SOA.txt'), 'r')
         with infile as fil:
             for line in fil:
                 if line.startswith('SOA record '):
@@ -291,8 +291,8 @@ def answer_SOA(requst, List_db_dns_out, List_db_dns_out_1):
     List_db_dns_out["CLASS"] = requst.CLASS
     List_db_dns_out["TTL"] = requst.TTL
     soa = 0
-    if os.path.isfile(os.path.abspath('.\\Records\\SOA.txt')):
-        infile = open(os.path.abspath('.\\Records\\SOA.txt'), 'r')
+    if os.path.isfile(os.path.abspath('./Records/SOA.txt')):
+        infile = open(os.path.abspath('./Records/SOA.txt'), 'r')
         with infile as fil:
             for line in fil:
                 soa_t = "default"
@@ -402,8 +402,8 @@ def answer_TXT(requst, List_db_dns_out, List_db_dns_out_1):
     List_db_dns_out["CLASS"] = requst.CLASS
     List_db_dns_out["TTL"] = requst.TTL
     fin_end = 0
-    if os.path.isfile(os.path.abspath('.\\Records\\TXT.txt')):
-        infile = open(os.path.abspath('.\\Records\\TXT.txt'), 'r')
+    if os.path.isfile(os.path.abspath('./Records/TXT.txt')):
+        infile = open(os.path.abspath('./Records/TXT.txt'), 'r')
         with infile as fil:
             for line in fil:
                 if line.startswith('TXT_record'):
@@ -553,8 +553,8 @@ def answer_NS(requst, List_db_dns_out, List_db_dns_out_1):
     List_db_dns_out["CLASS"] = requst.CLASS
     List_db_dns_out["TTL"] = requst.TTL
     fin_end = 0
-    if os.path.isfile(os.path.abspath('.\\Records\\NS.txt')):
-        infile = open(os.path.abspath('.\\Records\\NS.txt'), 'r')
+    if os.path.isfile(os.path.abspath('./Records/NS.txt')):
+        infile = open(os.path.abspath('./Records/NS.txt'), 'r')
         with infile as fil:
             for line in fil:
                 if line.startswith('NS record'):
@@ -835,11 +835,11 @@ def DB_DNS_in(in_message, Session, lock):
     List_db_dns_out["ID"] = List_db_dns_in["ID"]
     List_db_dns_out["QR"] = "1"  # 0-requst , 1 answer
     List_db_dns_out["OPCODE"] = List_db_dns_in["OPCODE"]  # 0- standart requst and variant
-    List_db_dns_out["AA"] = List_db_dns_out["AA"] = "1"  # Code answer authoritarian DNS server
+    List_db_dns_out["AA"] = "1"  # Code answer authoritarian DNS server
     List_db_dns_out["TC"] = List_db_dns_in["TC"]  # TrunCation
     List_db_dns_out["RD"] = "0"  # Recursion
     List_db_dns_out["RA"] = "0"  # Recursion Available
-    List_db_dns_out["Z"] = List_db_dns_in["Z"]  # Reservation
+    List_db_dns_out["Z"] = "000"  #List_db_dns_in["Z"]  # Reservation
     List_db_dns_out["QDCOUNT"] = List_db_dns_in["QDCOUNT"]  # 1-requst
     List_db_dns_out["NSCOUNT"] = List_db_dns_in["NSCOUNT"]  # numba write name servis available  #default 0000
     List_db_dns_out["ARCOUNT"] = List_db_dns_in["ARCOUNT"]  # numba write recurs additionally

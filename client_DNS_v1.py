@@ -886,10 +886,10 @@ def List_call():
 
 def ip_server():
    # print('Enter DNS server: (blank to  default "8.8.8.8")')  # "127.0.0.1"
-    print('Enter DNS server: (blank to  default "192.168.1.180")')  # "127.0.0.1"
+    print('Enter DNS server: (blank to  default "192.168.20.191")')  # "127.0.0.1"
     ip_server = input()
     if ip_server == '':
-        ip_server = "192.168.1.180"  # "127.0.0.1"
+        ip_server = "192.168.20.191"  # "127.0.0.1"
        # ip_server = "8.8.8.8"  # "127.0.0.1"
 
     else:

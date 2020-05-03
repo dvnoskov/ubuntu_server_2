@@ -25,13 +25,13 @@ def send_udp_message(message, address, port):
     server_address = (address, port)
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
-        print("message :", server_address)
+   #     print("message :", server_address)
         sock.sendto(binascii.unhexlify(message), server_address)
         sock.settimeout(10)
         data, _ = sock.recvfrom(1024)
     except socket.error:
         sock.close()
-        print('socket error')
+  #      print('socket error')
     else:
         sock.close()
        # print(binascii.hexlify(data).decode("utf-8"))

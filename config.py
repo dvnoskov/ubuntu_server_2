@@ -3,8 +3,8 @@
 #-----------------------------------------------------------------------
 #host_DNS = '127.0.0.1'  # Standard loopback interface address (localhost)
 #host_DNS = '192.168.1.180'  # Standard loopback interface address (localhost)
-host_DNS = '192.168.1.144'  # ip adress
-#host_DNS = '193.254.196.206'  # ip adress
+host_DNS = '192.168.20.191'  # ip adress
+host_DNS2 = '193.254.196.206'  # ip adress
 #host_DNS2 ='192.168.1.190'  # Standard loopback interface address (localhost)
 port_DNS = 53  # Port to listen on (non-privileged ports are > 1023)
 port_DYN_DNS = 80  # Port to listen on (non-privileged ports are > 1023)
