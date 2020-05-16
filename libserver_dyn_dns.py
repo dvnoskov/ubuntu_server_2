@@ -1,3 +1,10 @@
+#----------------------------------------------------------------------
+#V2.0 2020
+#
+#double update data user in server (user data host 1 and admin -user data host2)
+#no syn login user
+#-----------------------------------------------------------------------
+
 import selectors
 import urllib.parse
 import binascii
@@ -9,11 +16,14 @@ import re
 import logging.handlers
 import queue
 import concurrent.futures
+import requests
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from threading import Thread
-from config import max_pool, max_queue, route_DB
+
+from config import max_pool, max_queue, route_DB, host_DNS2 ,log_admin, pas_admin, time_serwer
 from cr_dyndns_db import DynDNS, User
 
 
@@ -37,6 +47,12 @@ class Message:
         self.body_out = None
         self.send_response = None
         self.request_line = None
+        self.homenam_in = None
+        self.rdata_in = None
+        self.inuser_in = None
+        self.inttl_in = None
+        self.homnam_in = None
+        self.myip_in = None
         self.loger = logging.getLogger()
         self.loger.setLevel(logging.DEBUG)
         concurrent.futures.ThreadPoolExecutor(max_workers=max_pool)
@@ -67,6 +83,7 @@ class Message:
         else:
             if data:
                 self._recv_buffer += data
+                print("incoming", repr(self._recv_buffer),  self.addr)
             else:
                 raise RuntimeError("Peer closed.")
 
@@ -74,7 +91,7 @@ class Message:
 
     def _write(self):   #11
         if self._send_buffer:
-       #     print("sending", repr(self._send_buffer), "to", self.addr)
+         #   print("sending", repr(self._send_buffer), "to", self.addr)
             try:
                 # Should be ready to write
                 sent = self.sock.send(self._send_buffer)
@@ -138,7 +155,7 @@ class Message:
 
 
     def close(self):
-    #    print("closing connection to", self.addr)
+     #   print("closing connection to", self.addr)
         try:
             self.selector.unregister(self.sock)
         except Exception as e:
@@ -321,7 +338,8 @@ class Message:
         self.session = self.Session()
         self.Base = declarative_base()
         if self.headers["Host"] == " dimon49.ml" or self.headers["Host"] == " members.dyndns.org" \
-                or self.headers["Host"] == " 193.254.196.206" or self.headers["Host"] == " 192.168.1.144":
+                or self.headers["Host"] == " 193.254.196.206" or self.headers["Host"] == " 192.168.1.144"\
+                or self.headers["Host"] == " 192.168.1.180":
                                                                    # "_xxxxxxxx' example " 127.0.0.1:65432"
 
             if self.path == "/nic/update":
@@ -404,34 +422,39 @@ class Message:
                 self.stop_DB()
                 self.do_Requst_get()
 
-
     def do_Requst_get(self):
-        if self.user != "admin":
-            requestline = self.request_line[1]
-            parse = dict(urllib.parse.parse_qsl(qs=requestline, keep_blank_values=True))
-            for k in parse.keys():
-                if ("".join(re.compile(r'myip').findall(k))) == "myip":
-                    myip_in_parse = parse.get(k)
-                    if myip_in_parse == "":
-                        myip_in = self.addr[0]
-                    else:
-                        myip_in = myip_in_parse.split(" ")[0]
-
-                elif ("".join(re.compile(r'hostname').findall(k))) == "hostname":
-                    homename_in = parse.get(k)
-                    homnam_in = homename_in.split(" ")[0]
-
+        #      if self.user != "admin":
+        requestline = self.request_line[1]
+        parse = dict(urllib.parse.parse_qsl(qs=requestline, keep_blank_values=True))
+        for k in parse.keys():
+            if ("".join(re.compile(r'myip').findall(k))) == "myip":
+                myip_in_parse = parse.get(k)
+                if myip_in_parse == "":
+                    self.myip_in = self.addr[0]
                 else:
-                    pass
+                    self.myip_in = myip_in_parse.split(" ")[0]
 
+                ip = self.myip_in.split(".")
+                s = [int(ip[0]), int(ip[1]), int(ip[2]), int(ip[3])]
+                self.rdata_in = str(binascii.hexlify(bytes(bytearray(s))))[2:10]
 
-            ip = myip_in.split(".")
-            s = [int(ip[0]), int(ip[1]), int(ip[2]), int(ip[3])]
-            rdata_in = str(binascii.hexlify(bytes(bytearray(s))))[2:10]
-            homenam_in = (binascii.hexlify(bytes(str.encode(homnam_in)))).decode('utf-8')
+            elif ("".join(re.compile(r'hostname').findall(k))) == "hostname":
+                homename_in = parse.get(k)
+                self.homnam_in = homename_in.split(" ")[0]
+                self.homenam_in = (binascii.hexlify(bytes(str.encode(self.homnam_in)))).decode('utf-8')
+            elif ("".join(re.compile(r'user').findall(k))) == "user":
+                user_in = parse.get(k)
+                self.inuser_in = user_in.split(" ")[0]
+            elif ("".join(re.compile(r'ttl').findall(k))) == "ttl":
+                ttl_in = parse.get(k)
+                self.inttl_in = ttl_in.split(" ")[0]
+            else:
+                pass
+
+        if self.user != "admin":
             query = self.session.query(DynDNS)
             filt2 = query.filter(
-                DynDNS.NAME == homenam_in or DynDNS.USER == self.user and DynDNS.RDATA == rdata_in).first()
+                DynDNS.NAME == self.homenam_in or DynDNS.USER == self.user and DynDNS.RDATA == self.rdata_in).first()
             if filt2 is None:
                 self.stop_DB()
                 self.send_response = "200 OK"
@@ -442,7 +465,7 @@ class Message:
                 self.do_HEAD()
             else:
                 filt3 = query.filter(
-                    DynDNS.USER == self.user or DynDNS.NAME == homenam_in and DynDNS.RDATA == rdata_in).first()
+                    DynDNS.USER == self.user or DynDNS.NAME == self.homenam_in and DynDNS.RDATA == self.rdata_in).first()
                 if filt3 is None:
                     self.stop_DB()
                     self.send_response = "200 OK"
@@ -453,20 +476,35 @@ class Message:
                     self.do_HEAD()
                 else:
                     filt4 = query.filter(
-                        DynDNS.USER == self.user or DynDNS.RDATA == rdata_in and DynDNS.NAME == homenam_in).first()
+                        DynDNS.USER == self.user or DynDNS.RDATA == self.rdata_in and DynDNS.NAME == self.homenam_in).first()
                     if filt4 is None:
                         self._lock = threading.Lock()
                         self._lock.acquire()
-                        filt5 = query.filter(DynDNS.USER == self.user, DynDNS.NAME == homenam_in)
-                        filt5.update({DynDNS.RDATA: rdata_in})
+                        filt5 = query.filter(DynDNS.USER == self.user, DynDNS.NAME == self.homenam_in)
+                        filt5.update({DynDNS.RDATA: self.rdata_in})
+                        menu = query.filter(DynDNS.NAME == self.homenam_in, DynDNS.USER == self.user).first()
+                        ttl = menu.TTL
                         self._lock.release()
                         self.stop_DB()
                         self.send_response = "200 OK"
-                        text = "good   " + str(myip_in)
+                        text = "good   " + str(self.myip_in)
                         self.body_out = text
                         self.header_out = "Content-Encoding" + ":" + "utf-8" + "\r\n" + 'X-UpdateCode' + ":" + 'A' + "\r\n" + \
                             'Content-Length' + ":" + str(len(text)) + "\r\n"
                         self.do_HEAD()
+                        data_sin = {
+                            "hostname": str(self.homnam_in),
+                            "myip": str(self.myip_in),
+                            "user": str(self.user),
+                            "ttl": str(ttl),}
+                        try:
+                            url = "http://" + host_DNS2 + "/nic/update"
+                            print(url,data_sin)
+                            requests.get(url, params=data_sin, auth=(log_admin, pas_admin), timeout=time_serwer)
+                        except :
+                            return
+                        else:
+                            return
                     else:
                         self.stop_DB()
                         self.send_response = "200 OK"
@@ -475,6 +513,32 @@ class Message:
                         self.header_out = "Content-Encoding" + ":" + "utf-8" + "\r\n" + 'X-UpdateCode' + ":" + 'A' + "\r\n" + \
                             'Content-Length' + ":" + str(len(text)) + "\r\n"
                         self.do_HEAD()
+
+        elif self.user == "admin":
+            query = self.session.query(DynDNS)
+            filt8 = query.filter(
+                DynDNS.USER == self.inuser_in or DynDNS.RDATA == self.rdata_in and DynDNS.NAME == self.homenam_in).first()
+            if filt8 is None:
+                self._lock = threading.Lock()
+                self._lock.acquire()
+                filt9 = query.filter(DynDNS.USER == self.inuser_in, DynDNS.NAME == self.homenam_in)
+                filt9.update({DynDNS.RDATA: self.rdata_in, DynDNS.TTL: self.inttl_in})
+                self._lock.release()
+                self.stop_DB()
+                self.send_response = "200 OK"
+                text = "good   " + str(self.myip_in)
+                self.body_out = text
+                self.header_out = "Content-Encoding" + ":" + "utf-8" + "\r\n" + 'X-UpdateCode' + ":" + 'A' + "\r\n" + \
+                                  'Content-Length' + ":" + str(len(text)) + "\r\n"
+                self.do_HEAD()
+            else:
+                self.stop_DB()
+                self.send_response = "200 OK"
+                text = "nochg_admin"
+                self.body_out = text
+                self.header_out = "Content-Encoding" + ":" + "utf-8" + "\r\n" + 'X-UpdateCode' + ":" + 'A' + "\r\n" + \
+                                  'Content-Length' + ":" + str(len(text)) + "\r\n"
+                self.do_HEAD()
 
         else:
             self.do_AUTHHEAD()

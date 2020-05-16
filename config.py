@@ -1,9 +1,10 @@
 #-----------------------------------------------------------------------
-# config server
+# config server v02.2020
 #-----------------------------------------------------------------------
 #host_DNS = '127.0.0.1'  # Standard loopback interface address (localhost)
 #host_DNS = '192.168.1.180'  # Standard loopback interface address (localhost)
-host_DNS = '192.168.20.191'  # ip adress
+host_DNS = '178.54.6.167'  # Standard loopback interface address (localhost)
+#host_DNS2 ='192.168.1.190'  # Standard loopback interface address (localhost)
 host_DNS2 = '193.254.196.206'  # ip adress
 #host_DNS2 ='192.168.1.190'  # Standard loopback interface address (localhost)
 port_DNS = 53  # Port to listen on (non-privileged ports are > 1023)
@@ -15,8 +16,10 @@ max_pool_ser = 10 # ThreadPoolExecutor(max_workers)
 max_queue_ser = 20 #queue.Queue(maxsize)
 #DNS_1 = '8.8.8.8' # dns server 1
 #DNS_2 = '8.8.1.1' # dns server 2
-#time_serwer = 2 # time answer serwer DNS cek
+time_serwer = 2 # time answer serwer DNS cek
 #time_update_DNS = 20 #time update DNS server
-#log_admin ='admin' #user admin
-#pas_admin ='adminKiK' # password admin
+log_admin ='' #user admin
+pas_admin ='' # password admin
+#------------------------------------------------------------------------------------
+
 MINIMUM = "00000E10" #3600
