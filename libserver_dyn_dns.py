@@ -1,8 +1,9 @@
 #----------------------------------------------------------------------
-#V2.0 2020
+#V3.0 2020
 #
 #double update data user in server (user data host 1 and admin -user data host2)
 #no syn login user
+#update /time and /status
 #-----------------------------------------------------------------------
 
 import selectors
@@ -244,62 +245,45 @@ class Message:
     def str2hex(self):
         return binascii.hexlify(bytes(str.encode()))
 
-#
+
     def UPDATE_DYNDNS(self, incom):
         if incom == "ip":
-            query = self.session.query(DynDNS)
             update = {}
+            namba = 0
+            work = self.session.query(DynDNS).filter(DynDNS.STATUS == 'USER').count()
             while True:
-
-                work = query.filter(DynDNS.STATUS == 'USER').count()
-                if work >= 1:
-                    menu = self.session.query(DynDNS).filter(DynDNS.STATUS == 'USER').first()
-                    work_no = query.filter(DynDNS.dyndns_id == menu.dyndns_id)
-                    a1 = (int(menu.RDATA[0:2], 16))
-                    a2 = (int(menu.RDATA[2:4], 16))
-                    a3 = (int(menu.RDATA[4:6], 16))
-                    a4 = (int(menu.RDATA[6:8], 16))
+                if work - 1 >= namba:
+                    menu = self.session.query(DynDNS).filter(DynDNS.STATUS == 'USER').all()
+                    a1 = (int(menu[namba].RDATA[0:2], 16))
+                    a2 = (int(menu[namba].RDATA[2:4], 16))
+                    a3 = (int(menu[namba].RDATA[4:6], 16))
+                    a4 = (int(menu[namba].RDATA[6:8], 16))
                     ip = str(a1) + "." + str(a2) + "." + str(a3) + "." + str(a4)
-                    update[((binascii.unhexlify(menu.NAME)).decode('utf-8'))] = ip  #
-                    work_no.update({DynDNS.STATUS: ("SYN")})
-                    self.session.commit()
-
+                    update[((binascii.unhexlify(menu[namba].NAME)).decode('utf-8'))] = ip
+                    namba = namba + 1
                 else:
                     break
 
-            sys = query.filter(DynDNS.STATUS == 'SYN')
-            sys.update({DynDNS.STATUS: ("USER")})
             self.stop_DB()
 
         elif incom == "time":
-            query = self.session.query(DynDNS)
             update = {}
+            namba = 0
+            work = self.session.query(DynDNS).filter(DynDNS.STATUS == 'USER').count()
             while True:
-
-                work = query.filter(DynDNS.STATUS == 'USER').count()
-                if work >= 1:
-                    menu = self.session.query(DynDNS).filter(DynDNS.STATUS == 'USER').first()
-                    work_no = query.filter(DynDNS.dyndns_id == menu.dyndns_id)
-                    if menu.Time_stop == "millenium":
-                        update[((binascii.unhexlify(menu.NAME)).decode('utf-8'))] = menu.Time_stop  #
-                        work_no.update({DynDNS.STATUS: ("SYN")})
-                        self.session.commit()
+                if work - 1 >= namba:
+                    menu = self.session.query(DynDNS).filter(DynDNS.STATUS == 'USER').all()
+                    if menu[namba].Time_stop == "millenium":
+                        update[((binascii.unhexlify(menu[namba].NAME)).decode('utf-8'))] = menu[namba].Time_stop  #
+                        namba = namba + 1
                     else:
-                       # update[((binascii.unhexlify(menu.NAME)).decode('utf-8'))] = time.ctime(float(menu.Time_stop))  #
-                        update[((binascii.unhexlify(menu.NAME)).decode('utf-8'))] = time.strftime("%d-%m-%Y",\
-                                time.localtime(float(menu.Time_stop)))  #
-                        work_no.update({DynDNS.STATUS: ("SYN")})
-                        self.session.commit()
-
-
-
+                        update[((binascii.unhexlify(menu[namba].NAME)).decode('utf-8'))] = time.strftime("%d-%m-%Y",\
+                        time.localtime(float(menu[namba].Time_stop)))  #
+                        namba = namba + 1
                 else:
                     break
 
-            sys = query.filter(DynDNS.STATUS == 'SYN')
-            sys.update({DynDNS.STATUS: ("USER")})
             self.stop_DB()
-
 
         return update
 

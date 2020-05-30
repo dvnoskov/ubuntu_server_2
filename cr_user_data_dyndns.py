@@ -51,6 +51,15 @@ DynDNS_add_ip = DynDNS(NAME=Qname(name_ip),
                  STATUS="DynDNS")
 #session.add(DynDNS_add_ip)
 #session.commit()
+#-------------------------------------------------------
+#update dynhost.ml
+name_ip = "dynhost.ml"
+new_host = "192.0.0.0"
+query = session.query(DynDNS)
+sys = query.filter(DynDNS.NAME == Qname(name_ip))
+sys.update({DynDNS.RDATA: Ipdata(new_host)})
+#session.commit()
+#------------------------------------------------------
 
 #name_dyndns = "members.dyndns.org" # name update ip adres
 name_dyndns = "dimon49.ml" # name update ip adres
