@@ -84,7 +84,7 @@ class Message:
         else:
             if data:
                 self._recv_buffer += data
-                print("incoming", repr(self._recv_buffer),  self.addr)
+           #     print("incoming", repr(self._recv_buffer),  self.addr)
             else:
                 raise RuntimeError("Peer closed.")
 
@@ -322,8 +322,7 @@ class Message:
         self.session = self.Session()
         self.Base = declarative_base()
         if self.headers["Host"] == " dimon49.ml" or self.headers["Host"] == " members.dyndns.org" \
-                or self.headers["Host"] == " 193.254.196.206" or self.headers["Host"] == " 192.168.1.144"\
-                or self.headers["Host"] == " 192.168.1.180":
+                or self.headers["Host"] == " 176.9.168.4" or  self.headers["Host"] == " dynhost.ml":
                                                                    # "_xxxxxxxx' example " 127.0.0.1:65432"
 
             if self.path == "/nic/update":
@@ -484,10 +483,12 @@ class Message:
                         try:
                             url = "http://" + host_DNS2 + "/nic/update"
                             print(url,data_sin)
-                            requests.get(url, params=data_sin, auth=(log_admin, pas_admin), timeout=time_serwer)
+                            r = requests.get(url, params=data_sin, auth=(log_admin, pas_admin), timeout=time_serwer)
                         except :
                             return
                         else:
+                          #  print("status_code ", r.status_code)
+                          #  print(r.text)
                             return
                     else:
                         self.stop_DB()
