@@ -6,7 +6,7 @@ setuptools==18.1
 requests==2.22.0
 SQLAlchemy==1.3.8
 urllib3==1.25.3
-aiohttp==3.6.2
+aiohttp==3.7.4
 asyn-timeout==3.0.1
 multidict==4.5.2
 yarl==1.3.0
